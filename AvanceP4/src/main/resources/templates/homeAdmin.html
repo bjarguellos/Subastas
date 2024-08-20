@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <title>Inicio De Administrador</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <style>
+        .custom-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 1.5em;
+            border: solid black;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        .btn-primary, .btn-danger, .btn-secondary, .btn-success {
+            margin-right: 5px;
+        }
+        .btn-sm {
+            font-size: 0.9em;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .header-row {
+            background-color: #007bff;
+            color: white;
+        }
+        .header-row th {
+            text-align: center;
+        }
+        .user-list th, .user-details th {
+            background-color: #082355;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/info}">Home</a>
+            <a class="navbar-brand" href="#" th:href="@{/listaSubastas}">Subastas</a>
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="navbar-brand" href="#" th:href="@{/}">Mi Perfil</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><span class="navbar-brand">Usuario: <span sec:authentication="principal.username"></span></span></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <br>
+    <div class="jumbotron bg-primary">
+        <h1 class="display-4">Dashboard de Usuarios</h1>
+        <hr class="my-4">
+        <p class="lead">Administrador</p>
+    </div>
+    <br>
+
+    <form class="form-inline text-center" th:action="@{/buscar}" method="get">
+        <div class="form-group">
+            <label for="buscarEmail">Buscar Usuario:</label>
+            <input type="text" class="form-control" id="buscarEmail" name="email" placeholder="ejemplo@ejemplo.com">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <br>
+
+    <div th:if="${error != null}" class="alert alert-danger">
+        <p th:text="${error}"></p>
+
+      <div class="text-center">
+        <a class="btn btn-secondary" href="#" th:href="@{/homeAdmin}">Volver a la Lista de Usuarios</a>
+    </div>      
+    </div>
+
+
+    <div th:if="${usuario != null}">
+        <table class="table table-striped table-bordered user-details">
+            <thead>
+                <tr class="header-row">
+                    <th class="h3" colspan="6">Datos de usuario</th>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td th:text="${usuario.id}">ID</td>
+                    <td th:text="${usuario.nombre}">Nombre</td>
+                    <td th:text="${usuario.apellido}">Apellido</td>
+                    <td th:text="${usuario.email}">Email</td>
+                    <td th:text="${usuario.roles.iterator().next().nombre}">Rol</td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" th:href="@{'/editar/' + ${usuario.id}}">Editar</a>
+                        <a class="btn btn-danger btn-sm" th:href="@{'/eliminar/' + ${usuario.id}}"
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <a class="btn btn-secondary" href="#" th:href="@{/homeAdmin}">Volver a la Lista de Usuarios</a>
+        </div>
+    </div>
+
+    <br>
+
+    <div th:if="${usuario == null}">
+        <table class="table table-striped table-bordered user-list">
+            <thead>
+                <tr class="header-row">
+                    <th class="h3" colspan="6">Lista de usuarios</th>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="usuario : ${usuarios}">
+                    <td th:text="${usuario.id}">ID</td>
+                    <td th:text="${usuario.nombre}">Nombre</td>
+                    <td th:text="${usuario.apellido}">Apellido</td>
+                    <td th:text="${usuario.email}">Email</td>
+                    <td th:text="${usuario.roles.iterator().next().nombre}">Rol</td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" th:href="@{'/editar/' + ${usuario.id}}">Editar</a>
+                        <a class="btn btn-danger btn-sm" th:href="@{'/eliminar/' + ${usuario.id}}"
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        <a class="btn btn-success" href="#" th:href="@{/registro}">Agregar Usuario</a>
+    </div>
+</div>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>

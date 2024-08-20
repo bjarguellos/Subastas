@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <title>Editar mi Perfil de Usuario</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+
+
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+             <a class="navbar-brand" href="#" th:href="@{/info}">Home</a>
+             <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="navbar-brand" href="#" th:href="@{/homeAdmin}">Lista de usuarios</a>
+            <a class="navbar-brand" href="#" th:href="@{/listaSubastas}">Subastas</a>
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="navbar-brand" href="#" th:href="@{/}">Mi Perfil</a> <!-- Corrección en el enlace -->
+        </div>
+
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><span class="navbar-brand">Usuario: <span sec:authentication="principal.username"></span></span></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<div class="container mt-5">
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenido, <span th:text="${usuario.nombre} + ' ' + ${usuario.apellido}"></span></h1>
+        <hr class="my-4">
+        <p class="lead">Esta es su página de perfil.</p>
+        <a class="btn btn-info btn-lg" th:href="@{/editarPerfil}" role="button">Editar Perfil</a>
+    </div>
+
+   
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr class="bg-primary text-white text-left borde">
+                <th class="h3" colspan="6">Datos de usuario</th>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${usuario != null}">
+                <td th:text="${usuario.id}">ID</td>
+                <td th:text="${usuario.nombre}">Nombre</td>
+                <td th:text="${usuario.apellido}">Apellido</td>
+                <td th:text="${usuario.email}">Email</td>
+                
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

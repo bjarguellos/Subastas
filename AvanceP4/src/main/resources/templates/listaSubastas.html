@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Lista de Subastas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <style>
+        /* Ajustar el ancho de la columna de acciones y alinear los botones */
+        .acciones-col {
+            width: 200px; /* Ajusta el ancho según sea necesario */
+            text-align: center; /* Alinea el contenido  */
+        }
+
+        /* Alinear los botones de acción */
+        .text-right {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" th:href="@{/}">Mi Perfil</a>
+                <a class="navbar-brand" th:href="@{/listaSubastas}">Lista de Subastas</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a th:href="@{/logout}">Cerrar sesión</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><span class="navbar-brand">Usuario: <span sec:authentication="principal.username"></span></span></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <br><br>
+
+    <br><br>
+    <div class="container">
+        <h1>Lista de Subastas</h1>
+      
+        <!-- Mostrar mensaje de error -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}">Mensaje de error</p>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#disponibles">Subastas Disponibles</a></li>
+            <li><a data-toggle="tab" href="#activas">Subastas Activas</a></li>
+            <li><a data-toggle="tab" href="#finalizadas">Subastas Finalizadas</a></li>
+            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}"><a data-toggle="tab" href="#crear">Crear Subasta</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="disponibles" class="tab-pane fade in active">
+                <h2>Subastas Disponibles</h2>
+                <input type="text" id="buscador" class="form-control" placeholder="Buscar subasta..." onkeyup="filtrarSubastas()">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Artículo</th>
+                            <th>Descripción</th>
+                            <th>Precio Inicial</th>
+                            <th>Fecha de Inicio</th>
+                            <th>Fecha de Fin</th>
+                            <th class="acciones-col"th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaSubastasDisponibles">
+                        <tr th:each="subasta : ${subastasDisponibles}">
+                            <td th:text="${subasta.id}">1</td>
+                            <td th:text="${subasta.articulo}">Artículo</td>
+                            <td th:text="${subasta.descripcion}">Descripción</td>
+                            <td th:text="${subasta.precioInicial}">0.00</td>
+                            <td th:text="${subasta.fechaInicio}">2024-01-01T00:00:00</td>
+                            <td th:text="${subasta.fechaFin}">2024-01-01T00:00:00</td>
+                            <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                                <div class="text-right">
+                                <a th:href="@{/editarSubasta/{id}(id=${subasta.id})}" class="btn btn-info btn-sm">Editar</a>
+                                <a th:href="@{/borrarSubasta/{id}(id=${subasta.id})}" class="btn btn-danger btn-sm" 
+                                onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')">Finalizar</a>
+                            </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="activas" class="tab-pane fade">
+                <h2>Subastas Activas</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Artículo</th>
+                            <th>Descripción</th>
+                            <th>Precio Inicial</th>
+                            <th>Precio Actual</th>
+                            <th>Fecha de Inicio</th>
+                            <th>Fecha de Fin</th>
+                            <th>Pujar</th>
+                            <th class="acciones-col" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="subasta : ${subastasActivas}">
+                            <td th:text="${subasta.id}">1</td>
+                            <td th:text="${subasta.articulo}">Artículo</td>
+                            <td th:text="${subasta.descripcion}">Descripción</td>
+                            <td th:text="${subasta.precioInicial}">0.00</td>
+                            <td th:text="${subasta.precioActual}">0.00</td>
+                            <td th:text="${subasta.fechaInicio}">2024-01-01T00:00:00</td>
+                            <td th:text="${subasta.fechaFin}">2024-01-01T00:00:00</td>
+                            <td>
+                                <form th:action="@{/placeBid}" method="post" class="pujar-form">
+                                    <input type="hidden" name="auctionId" th:value="${subasta.id}" />
+                                    <div class="input-group">
+                                        <input type="number" name="bidAmount" step="0.01" min="0" placeholder="Cantidad a pujar" class="form-control" />
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary">Pujar</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </td>
+                            <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                                <div class="text-right">
+                                    <a th:href="@{/editarSubasta/{id}(id=${subasta.id})}" class="btn btn-info btn-sm">Editar</a>
+                                    <a th:href="@{/borrarSubasta/{id}(id=${subasta.id})}" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('¿Estás seguro de que deseas finalizar esta Subasta?')">Finalizar</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="finalizadas" class="tab-pane fade">
+                <h2>Subastas Finalizadas</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Artículo</th>
+                            <th>Descripción</th>
+                            <th>Precio Inicial</th>
+                            <th>Última puja</th>
+                            <th>Fecha de Inicio</th>
+                            <th>Fecha de Fin</th>
+                          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="subasta : ${subastasFinalizadas}">
+                            <td th:text="${subasta.id}">1</td>
+                            <td th:text="${subasta.articulo}">Artículo</td>
+                            <td th:text="${subasta.descripcion}">Descripción</td>
+                            <td th:text="${subasta.precioInicial}">0.00</td>
+                            <td th:text="${subasta.precioActual}">0.00</td>
+                            <td th:text="${subasta.fechaInicio}">2024-01-01T00:00:00</td>
+                            <td th:text="${subasta.fechaFin}">2024-01-01T00:00:00</td>
+                            <td>
+                                
+                            </td>
+                           
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+          
+
+            <div id="crear" class="tab-pane fade">
+                <h2>Crear Subasta</h2>
+                <form th:action="@{/crearSubasta}" method="post">
+                    <div class="form-group">
+                        <label for="articulo">Artículo</label>
+                        <input type="text" id="articulo" name="articulo" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" name="descripcion" class="form-control" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="precioInicial">Precio Inicial</label>
+                        <input type="number" id="precioInicial" name="precioInicial" step="0.01" min="0" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaInicio">Fecha de Inicio</label>
+                        <input type="datetime-local" id="fechaInicio" name="fechaInicio" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaFin">Fecha de Fin</label>
+                        <input type="datetime-local" id="fechaFin" name="fechaFin" class="form-control" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear Subasta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script>
+        function filtrarSubastas() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("buscador");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tablaSubastasDisponibles");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                            break;
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

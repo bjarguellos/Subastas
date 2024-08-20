@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalle de Pujas</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Detalle de Pujas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Artículo</th>
+                <th>Puja</th>
+                <th>Fecha de Puja</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="puja : ${pujas}">
+                <td th:text="${puja.usuario.email}">Usuario</td>
+                <td th:text="${puja.subasta.articulo}">Artículo</td>
+                <td th:text="${puja.cantidad}">Puja</td>
+                <td th:text="${#dates.format(puja.fechaPuja, 'dd/MM/yyyy')}">Fecha</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

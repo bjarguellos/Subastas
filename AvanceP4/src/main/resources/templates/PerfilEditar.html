@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <title>Editar mi Perfil de Usuario</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+
+    <style>
+        .row {
+				border: 2px solid black (8, 11, 51);
+				margin-top: 40px;
+				margin-left: 10%;
+				border-radius: 10px;
+				transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+				width: 65%;		
+			}
+	
+			.row:hover {
+				background-color: #f1f1f1;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			}
+
+        /* Estilos específicos para los input */
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group select {
+            width: 100%; /* Ajuste al ancho completo */
+            margin-bottom: 15px;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/info}">Home</a>
+            <a class="navbar-brand" href="#" th:href="@{/listaSubastas}">Subastas</a>
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="navbar-brand" href="#" th:href="@{/}">Mi Perfil</a> <!-- Corrección en el enlace -->
+        </div>
+
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><span class="navbar-brand">Usuario: <span sec:authentication="principal.username"></span></span></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br>
+<br>
+
+<div class="container" id="edit">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <h2 class="text-center">Editar mi Perfil de Usuario</h2>
+
+            <form th:action="@{/actualizarPerfil}" th:object="${usuario}" method="post">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" placeholder="Ingrese nombre">
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" class="form-control" id="apellido" th:field="*{apellido}" placeholder="Ingrese apellido">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Ingrese email" readonly>
+                </div>
+                <!-- No incluyas el rol en el formulario si no deseas que se actualice -->
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a class="btn btn-info" th:href="@{/}" role="button">Regresar</a>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+</body>
+</html>
