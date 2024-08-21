@@ -11,6 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// El repositorio SubastaRepository es una interfaz que extiende 
+// JpaRepository para gestionar la persistencia de entidades Subasta 
+// en la base de datos. Proporciona métodos para realizar operaciones 
+// de consulta y actualización sobre las subastas, basadas en el estado y las fechas relevantes.
+
 @Repository
 public interface SubastaRepository extends JpaRepository<Subasta, Long> {
         List<Subasta> findByEstado(EstadoSubasta estado);

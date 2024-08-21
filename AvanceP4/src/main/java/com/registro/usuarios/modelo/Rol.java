@@ -6,6 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+// La clase Rol es una entidad que representa los roles o perfiles
+// de usuario dentro del sistema. Estos roles se utilizan para gestionar 
+// los niveles de acceso y permisos que los usuarios tienen dentro de la aplicación.
+
 @Entity
 @Table(name = "rol")
 public class Rol {

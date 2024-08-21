@@ -4,6 +4,11 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// La clase Subasta es una entidad que representa una subasta 
+// en la aplicación. Contiene información sobre los artículos
+//  que están siendo subastados, los precios, y las fechas de 
+//  inicio y fin de la subasta, así como su estado actual.
+
 @Entity
 @Table(name = "subasta")
 public class Subasta {

@@ -15,6 +15,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+// La clase Usuario es una entidad que representa a un usuario 
+// en el sistema. Contiene información personal y de autenticación
+// del usuario, como nombre, apellido, correo electrónico y contraseña,
+//  así como los roles asociados a ese usuario.
+
 @Entity
 @Table(name = "usuarios", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Usuario {

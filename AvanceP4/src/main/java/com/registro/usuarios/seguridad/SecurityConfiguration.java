@@ -13,6 +13,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.registro.usuarios.servicio.UsuarioServicio;
 
+// La clase SecurityConfiguration configura la seguridad de la aplicación 
+// utilizando Spring Security. Se encarga de la autenticación y autorización 
+// de usuarios, definiendo cómo se deben manejar las solicitudes a la aplicación y cómo se autentican los usuarios.
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {

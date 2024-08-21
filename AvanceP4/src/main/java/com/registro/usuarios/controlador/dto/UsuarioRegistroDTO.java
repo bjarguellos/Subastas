@@ -1,5 +1,16 @@
 package com.registro.usuarios.controlador.dto;
 
+/**
+ * La clase UsuarioRegistroDTO representa un objeto de transferencia de datos (DTO) 
+ * que se utiliza para encapsular la información necesaria para registrar un usuario 
+ * en el sistema.
+ * 
+ * Un DTO es una clase simple utilizada para transferir datos entre diferentes 
+ * capas de una aplicación sin incluir lógica de negocio. En este caso, la clase 
+ * UsuarioRegistroDTO encapsula los datos básicos necesarios para el registro 
+ * de un usuario, como su nombre, apellido, correo electrónico y contraseña.
+ */
+
 public class UsuarioRegistroDTO {
 
 	private Long id;
